@@ -28,7 +28,7 @@
     </div>
 </div>
 
-<footer class="fixed bottom-4 text-sm text-white/40">
+<footer class="fixed bottom-4 text-sm text-white/40 sticky bottom-0 z-10">
     © 2025 StockRyse. All rights reserved.
 </footer>
 
@@ -68,7 +68,7 @@
             showLoading(); // Show placeholders before fetching data
 
             try {
-                const response = await fetch('http://localhost:8000/news/general');
+                const response = await fetch('http://localhost:8000/news/query/general');
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

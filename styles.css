@@ -1,9 +1,32 @@
+/* Custom Font (Urbanist) */
+@font-face {
+    font-family: 'Urbanist';
+    src: url('fonts/Urbanist.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 /* Global Reset and Base Styles */
 body, html {
-    height: 100%;
+    min-height: 100vh;
     margin: 0;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Urbanist', 'Arial', sans-serif;
     transition: background 0.5s ease, color 0.5s ease;
+    overflow-y: auto; /* Ensure the body can scroll */
+}
+
+/* Style the body's scrollbar */
+body::-webkit-scrollbar {
+    width: 8px;
+}
+
+body::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+}
+
+body::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
 }
 
 /* Background Gradient */
@@ -25,9 +48,13 @@ body, html {
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     width: 90%;
-    max-width: 950px;
-    height: 80vh;
+    max-width: 1400px; /* Match the max-width in your HTML */
+    min-height: 80vh;
+    padding-top: 20px; /* Add your desired top padding */
+    padding-bottom: 20px; /* Add your desired bottom padding */
     transition: background 0.5s ease;
+    box-sizing: border-box; /* Include padding in the width and height calculation */
+    margin: 40px auto; /* Center the frosted glass container with some top/bottom margin */
 }
 
 /* Sidebar Styles */
@@ -84,10 +111,11 @@ body, html {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-/* Scrollbar Styles */
+/* Allow news container to grow naturally */
 .news-container {
-    max-height: 70vh;
-    overflow-y: auto;
+    /* Remove height constraint if you want it to grow within the frosted glass */
+    /* height: 100%; */
+    overflow-y: auto; /* Keep this for scrolling content within the news container */
 }
 
 .news-container::-webkit-scrollbar {
@@ -99,6 +127,39 @@ body, html {
 }
 
 .news-container::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+}
+
+/* Style for the company description scrollbar */
+#stockDescriptionContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+#stockDescriptionContainer::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+}
+
+#stockDescriptionContainer::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.3);
+    border-radius: 4px;
+}
+
+#stockNewsContainer {
+    max-height: 400px; /* Adjust this value as needed */
+    overflow-y: auto; /* Enables vertical scrolling when content overflows */
+}
+
+/* Optional: Style the scrollbar for better visual consistency */
+#stockNewsContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+#stockNewsContainer::-webkit-scrollbar-track {
+    background: rgba(255,255,255,0.1);
+}
+
+#stockNewsContainer::-webkit-scrollbar-thumb {
     background: rgba(255,255,255,0.3);
     border-radius: 4px;
 }
@@ -191,6 +252,51 @@ input#searchInput::placeholder {
     max-width: 850px;
 }
 
+/* Consistent White Text Styles for Both Light and Dark Mode */
+body.light-mode .frosted-glass,
+body.dark-mode .frosted-glass {
+    color: rgba(255, 255, 255, 0.9); /* Slightly off-white for main text */
+}
+
+body.light-mode .frosted-glass h1,
+body.light-mode .frosted-glass h2,
+body.light-mode .frosted-glass h3,
+body.dark-mode .frosted-glass h1,
+body.dark-mode .frosted-glass h2,
+body.dark-mode .frosted-glass h3 {
+    color: white; /* Pure white for headings */
+}
+
+body.light-mode #companyHeaderName,
+body.dark-mode #companyHeaderName {
+    color: white;
+}
+
+body.light-mode #companyHeaderTicker,
+body.dark-mode #companyHeaderTicker {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+body.light-mode .bg-white\/10 .text-white\/70,
+body.dark-mode .bg-white\/10 .text-white\/70 {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+body.light-mode .bg-white\/10 .text-white,
+body.dark-mode .bg-white\/10 .text-white {
+    color: white;
+}
+
+body.light-mode .news-card h3,
+body.dark-mode .news-card h3 {
+    color: white;
+}
+
+body.light-mode .news-card p,
+body.dark-mode .news-card p {
+    color: rgba(255, 255, 255, 0.8);
+}
+
 /* Loading Animation for News Skeletons */
 .animate-pulse {
     animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -203,6 +309,15 @@ input#searchInput::placeholder {
     50% {
         opacity: 0.5;
     }
+}
+
+#stockDescriptionContainer {
+    max-height: 150px; /* Adjust this value as needed */
+    overflow-y: auto; /* Enables vertical scrolling */
+}
+
+#stockLoadingIndicator {
+    display: none; /* Initially hide the loading indicator */
 }
 
 /* From Uiverse.io by Creatlydev */
@@ -235,4 +350,342 @@ input#searchInput::placeholder {
     color: #a7f3d0;
     transform: translate(0, -0.25rem);
     background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* From Uiverse.io by Nawsome */
+.loader {
+    position: relative;
+    width: 75px;
+    height: 100px;
+}
+
+.loader__bar {
+    position: absolute;
+    bottom: 0;
+    width: 10px;
+    height: 50%;
+    background: rgb(0, 0, 0);
+    transform-origin: center bottom;
+    box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.loader__bar:nth-child(1) {
+    left: 0px;
+    transform: scale(1, 0.2);
+    -webkit-animation: barUp1 4s infinite;
+    animation: barUp1 4s infinite;
+}
+
+.loader__bar:nth-child(2) {
+    left: 15px;
+    transform: scale(1, 0.4);
+    -webkit-animation: barUp2 4s infinite;
+    animation: barUp2 4s infinite;
+}
+
+.loader__bar:nth-child(3) {
+    left: 30px;
+    transform: scale(1, 0.6);
+    -webkit-animation: barUp3 4s infinite;
+    animation: barUp3 4s infinite;
+}
+
+.loader__bar:nth-child(4) {
+    left: 45px;
+    transform: scale(1, 0.8);
+    -webkit-animation: barUp4 4s infinite;
+    animation: barUp4 4s infinite;
+}
+
+.loader__bar:nth-child(5) {
+    left: 60px;
+    transform: scale(1, 1);
+    -webkit-animation: barUp5 4s infinite;
+    animation: barUp5 4s infinite;
+}
+
+.loader__ball {
+    position: absolute;
+    bottom: 10px;
+    left: 0;
+    width: 10px;
+    height: 10px;
+    background: rgb(58, 255, 44);
+    border-radius: 50%;
+    -webkit-animation: ball624 4s infinite;
+    animation: ball624 4s infinite;
+}
+
+@keyframes ball624 {
+    0% {
+        transform: translate(0, 0);
+    }
+
+    5% {
+        transform: translate(8px, -14px);
+    }
+
+    10% {
+        transform: translate(15px, -10px);
+    }
+
+    17% {
+        transform: translate(23px, -24px);
+    }
+
+    20% {
+        transform: translate(30px, -20px);
+    }
+
+    27% {
+        transform: translate(38px, -34px);
+    }
+
+    30% {
+        transform: translate(45px, -30px);
+    }
+
+    37% {
+        transform: translate(53px, -44px);
+    }
+
+    40% {
+        transform: translate(60px, -40px);
+    }
+
+    50% {
+        transform: translate(60px, 0);
+    }
+
+    57% {
+        transform: translate(53px, -14px);
+    }
+
+    60% {
+        transform: translate(45px, -10px);
+    }
+
+    67% {
+        transform: translate(37px, -24px);
+    }
+
+    70% {
+        transform: translate(30px, -20px);
+    }
+
+    77% {
+        transform: translate(22px, -34px);
+    }
+
+    80% {
+        transform: translate(15px, -30px);
+    }
+
+    87% {
+        transform: translate(7px, -44px);
+    }
+
+    90% {
+        transform: translate(0, -40px);
+    }
+
+    100% {
+        transform: translate(0, 0);
+    }
+}
+
+@-webkit-keyframes barUp1 {
+    0% {
+        transform: scale(1, 0.2);
+    }
+
+    40% {
+        transform: scale(1, 0.2);
+    }
+
+    50% {
+        transform: scale(1, 1);
+    }
+
+    90% {
+        transform: scale(1, 1);
+    }
+
+    100% {
+        transform: scale(1, 0.2);
+    }
+}
+
+@keyframes barUp1 {
+    0% {
+        transform: scale(1, 0.2);
+    }
+
+    40% {
+        transform: scale(1, 0.2);
+    }
+
+    50% {
+        transform: scale(1, 1);
+    }
+
+    90% {
+        transform: scale(1, 1);
+    }
+
+    100% {
+        transform: scale(1, 0.2);
+    }
+}
+
+@-webkit-keyframes barUp2 {
+    0% {
+        transform: scale(1, 0.4);
+    }
+
+    40% {
+        transform: scale(1, 0.4);
+    }
+
+    50% {
+        transform: scale(1, 0.8);
+    }
+
+    90% {
+        transform: scale(1, 0.8);
+    }
+
+    100% {
+        transform: scale(1, 0.4);
+    }
+}
+
+@keyframes barUp2 {
+    0% {
+        transform: scale(1, 0.4);
+    }
+
+    40% {
+        transform: scale(1, 0.4);
+    }
+
+    50% {
+        transform: scale(1, 0.8);
+    }
+
+    90% {
+        transform: scale(1, 0.8);
+    }
+
+    100% {
+        transform: scale(1, 0.4);
+    }
+}
+
+@-webkit-keyframes barUp3 {
+    0% {
+        transform: scale(1, 0.6);
+    }
+
+    100% {
+        transform: scale(1, 0.6);
+    }
+}
+
+@keyframes barUp3 {
+    0% {
+        transform: scale(1, 0.6);
+    }
+
+    100% {
+        transform: scale(1, 0.6);
+    }
+}
+
+@-webkit-keyframes barUp4 {
+    0% {
+        transform: scale(1, 0.8);
+    }
+
+    40% {
+        transform: scale(1, 0.8);
+    }
+
+    50% {
+        transform: scale(1, 0.4);
+    }
+
+    90% {
+        transform: scale(1, 0.4);
+    }
+
+    100% {
+        transform: scale(1, 0.8);
+    }
+}
+
+@keyframes barUp4 {
+    0% {
+        transform: scale(1, 0.8);
+    }
+
+    40% {
+        transform: scale(1, 0.8);
+    }
+
+    50% {
+        transform: scale(1, 0.4);
+    }
+
+    90% {
+        transform: scale(1, 0.4);
+    }
+
+    100% {
+        transform: scale(1, 0.8);
+    }
+}
+
+@-webkit-keyframes barUp5 {
+    0% {
+        transform: scale(1, 1);
+    }
+
+    40% {
+        transform: scale(1, 1);
+    }
+
+    50% {
+        transform: scale(1, 0.2);
+    }
+
+    90% {
+        transform: scale(1, 0.2);
+    }
+
+    100% {
+        transform: scale(1, 1);
+    }
+}
+
+@keyframes barUp5 {
+    0% {
+        transform: scale(1, 1);
+    }
+
+    40% {
+        transform: scale(1, 1);
+    }
+
+    50% {
+        transform: scale(1, 0.2);
+    }
+
+    90% {
+        transform: scale(1, 0.2);
+    }
+
+    100% {
+        transform: scale(1, 1);
+    }
 }

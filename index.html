@@ -25,26 +25,28 @@
     <img src="images/logo-transparent.png" alt="StockRyse Logo" class="mx-auto h-40 w-auto object-contain mb-4" />
 
     <div class="search-container mx-auto flex items-center">
-        <input
-                class="bg-green-100 text-green-800 font-mono ring-1 ring-green-400 focus:ring-2 focus:ring-green-600 outline-none duration-300 placeholder:text-green-600 placeholder:opacity-50 rounded-full px-4 py-2 shadow-md focus:shadow-lg focus:shadow-green-500 w-full"
-                autocomplete="off"
-                placeholder="Search stocks, ETFs, indices"
-                name="text"
-                type="text"
-                id="searchInput"
-        />
-        <span class="rounded-full bg-green-100 text-green-800 ml-2 p-2 rotate-[45deg] shadow-md focus:shadow-lg focus:shadow-green-500">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-        </svg>
-      </span>
+        <form id="stockSearchForm" class="w-full flex items-center">
+            <input
+                    class="bg-green-100 text-green-800 font-mono ring-1 ring-green-400 focus:ring-2 focus:ring-green-600 outline-none duration-300 placeholder:text-green-600 placeholder:opacity-50 rounded-full px-4 py-2 shadow-md focus:shadow-lg focus:shadow-green-500 flex-grow"
+                    autocomplete="off"
+                    placeholder="Search stocks, ETFs, indices"
+                    name="ticker"
+                    type="text"
+                    id="searchInput"
+            />
+            <button type="submit" class="rounded-full bg-green-100 text-green-800 ml-2 p-2 rotate-[45deg] shadow-md focus:shadow-lg focus:shadow-green-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </button>
+        </form>
     </div>
 
     <div id="searchResults" class="mt-4 text-sm text-white/80"></div>
 </div>
 
-<footer class="fixed bottom-4 text-sm text-white/40" style="opacity: 0.6;">
+<footer class="fixed bottom-4 text-sm text-white/40 sticky bottom-0 z-10">
     © 2025 StockRyse. All rights reserved.
 </footer>
 
@@ -100,13 +102,25 @@
 
         loadSidebarAndHighlightActive();
 
-        // Search input handler (remains the same)
+        // Get the search form element
+        const stockSearchForm = document.getElementById('stockSearchForm');
         const searchInput = document.getElementById('searchInput');
         const searchResults = document.getElementById('searchResults');
 
-        searchInput.addEventListener('input', (e) => {
-            const searchTerm = e.target.value.trim();
-            searchResults.textContent = searchTerm ? `Searching for: ${searchTerm}` : '';
+        // Add an event listener to the form for submission
+        stockSearchForm.addEventListener('submit', (event) => {
+            event.preventDefault(); // Prevent the default form submission
+
+            const searchTerm = searchInput.value.trim();
+
+            if (searchTerm) {
+                // Construct the URL for the stock details page with the ticker parameter
+                const redirectUrl = `stock_details.html?ticker=${encodeURIComponent(searchTerm)}`;
+                // Redirect the user to the stock details page
+                window.location.href = redirectUrl;
+            } else {
+                searchResults.textContent = 'Please enter a stock ticker.';
+            }
         });
 
         // Hamburger menu and overlay toggle (initial setup - will be re-attached after sidebar load)
