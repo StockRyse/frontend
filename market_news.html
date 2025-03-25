@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockRyse - Market News</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="styles.css" rel="stylesheet" />
+    <script src="theme.js"></script>
+</head>
+<body class="light-mode flex flex-col items-center justify-center min-h-screen">
+<button id="hamburgerMenu" class="fixed top-4 left-4 z-50 text-white focus:outline-none">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+</button>
+
+<div id="sidebar-container"></div>
+
+<div id="overlay" class="overlay"></div>
+
+<div class="bg-gradient"></div>
+
+<div class="frosted-glass p-8 text-center flex flex-col items-center justify-center">
+    <h1 class="text-3xl font-bold text-white mb-6">Market News</h1>
+
+    <div id="newsContainer" class="news-container w-full px-4">
+    </div>
+</div>
+
+<footer class="fixed bottom-4 text-sm text-white/40">
+    © 2025 StockRyse. All rights reserved.
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const hamburgerMenu = document.getElementById('hamburgerMenu');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const newsContainer = document.getElementById('newsContainer');
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('active');
+            hamburgerMenu.classList.toggle('hidden', !sidebar.classList.contains('-translate-x-full'));
+        }
+
+        hamburgerMenu.addEventListener('click', toggleSidebar);
+        overlay.addEventListener('click', toggleSidebar);
+
+        // Loading animation
+        function showLoading() {
+            newsContainer.innerHTML = ""; // Clear any existing content
+            const numOfPlaceholders = 5; // Number of loading skeletons to show
+
+            for (let i = 0; i < numOfPlaceholders; i++) {
+                const loadingSkeleton = document.createElement('div');
+                loadingSkeleton.classList.add('flex', 'flex-col', 'gap-4', 'mb-4', 'w-full');
+
+                loadingSkeleton.innerHTML = `
+            <div class="animate-pulse bg-gray-300 w-full h-8 rounded-lg"></div> <div class="animate-pulse bg-gray-300 w-3/4 h-5 rounded-lg"></div> <div class="animate-pulse bg-gray-300 w-2/4 h-4 rounded-lg"></div> <div class="animate-pulse bg-gray-300 w-1/4 h-3 rounded-lg"></div> `;
+                newsContainer.appendChild(loadingSkeleton);
+            }
+        }
+
+        // Function to fetch news data
+        async function fetchNews() {
+            showLoading(); // Show placeholders before fetching data
+
+            try {
+                const response = await fetch('http://localhost:8000/news/general');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const newsData = await response.json();
+                populateNews(newsData);
+            } catch (error) {
+                console.error('Failed to fetch news:', error);
+                newsContainer.innerHTML = '<p class="text-red-500">Failed to load news. <button onclick="fetchNews()" class="text-blue-500 underline">Retry</button></p>';
+            }
+        }
+
+        // Function to dynamically generate news cards
+        function populateNews(newsArray) {
+            console.log("Fetched News Data:", newsArray);
+
+            newsContainer.innerHTML = ""; // Clear loading animation
+
+            newsArray.forEach(news => {
+                // Check if news has valid properties to avoid issues
+                const title = news.title || "No title available";
+                const summary = news.summary || "No summary available";
+                const source = news.source?.title || "Unknown source";
+                const date = news.date || "Unknown date";
+                const url = news.url || "#";
+
+                const newsCard = document.createElement('div');
+                newsCard.classList.add('news-card', 'bg-white/10', 'rounded-lg', 'p-4', 'mb-4', 'text-left', 'text-white', 'cursor-pointer', 'hover:bg-white/20', 'transition');
+
+                newsCard.innerHTML = `
+            <h3 class="text-xl font-semibold mb-2">${title}</h3>
+            <p class="text-sm opacity-80 mb-2">${summary}</p>
+            <div class="flex justify-between items-center text-xs opacity-60">
+                <span>${source}</span>
+                <span>${date}</span>
+            </div>
+        `;
+
+                // Open news URL in a new tab when clicked
+                newsCard.addEventListener('click', () => {
+                    if (url !== "#") {
+                        window.open(url, '_blank');
+                    }
+                });
+
+                newsContainer.appendChild(newsCard);
+            });
+        }
+
+        // Fetch news when the page loads
+        fetchNews();
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Function to load the sidebar and then highlight the active link
+        function loadSidebarAndHighlightActive() {
+            fetch('sidebar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+
+                    // Get the current page's filename
+                    const currentPage = window.location.pathname.split('/').pop();
+
+                    // Select all the anchor tags within the loaded sidebar
+                    const sidebarLinks = document.querySelectorAll('#sidebar a');
+
+                    // Loop through each link and check if its href matches the current page
+                    sidebarLinks.forEach(link => {
+                        if (link.getAttribute('href') === currentPage) {
+                            link.classList.add('active'); // Add 'active' class to the current page's link
+                        }
+                    });
+
+                    // Reattach event listeners for the hamburger menu and overlay
+                    const hamburgerMenu = document.getElementById('hamburgerMenu');
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.getElementById('overlay');
+
+                    function toggleSidebar() {
+                        sidebar.classList.toggle('-translate-x-full');
+                        overlay.classList.toggle('active');
+                        hamburgerMenu.classList.toggle('hidden', !sidebar.classList.contains('-translate-x-full'));
+                    }
+
+                    hamburgerMenu.addEventListener('click', toggleSidebar);
+                    overlay.addEventListener('click', () => {
+                        sidebar.classList.add('-translate-x-full');
+                        overlay.classList.remove('active');
+                        hamburgerMenu.classList.remove('hidden');
+                    });
+
+                    // Initialize theme toggle after sidebar is loaded
+                    const modeToggle = document.getElementById('modeToggle');
+                    if (modeToggle) {
+                        modeToggle.addEventListener('click', toggleTheme);
+                        updateThemeBasedOnPreference(); // Call this to set initial theme
+                    }
+                })
+                .catch(error => console.error('Error loading sidebar:', error));
+        }
+
+        loadSidebarAndHighlightActive();
+    });
+</script>
+</body>
+</html>

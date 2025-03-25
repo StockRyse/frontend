@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StockRyse</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="styles.css" rel="stylesheet" />
+    <script src="theme.js"></script>
+</head>
+<body class="light-mode flex flex-col items-center justify-center min-h-screen">
+<button id="hamburgerMenu" class="fixed top-4 left-4 z-50 text-white focus:outline-none">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+</button>
+
+<div id="sidebar-container"></div>
+
+<div id="overlay" class="overlay"></div>
+
+<div class="bg-gradient"></div>
+
+<div class="frosted-glass p-8 text-center flex flex-col items-center justify-center">
+    <img src="images/logo-transparent.png" alt="StockRyse Logo" class="mx-auto h-40 w-auto object-contain mb-4" />
+
+    <div class="search-container mx-auto flex items-center">
+        <input
+                class="bg-green-100 text-green-800 font-mono ring-1 ring-green-400 focus:ring-2 focus:ring-green-600 outline-none duration-300 placeholder:text-green-600 placeholder:opacity-50 rounded-full px-4 py-2 shadow-md focus:shadow-lg focus:shadow-green-500 w-full"
+                autocomplete="off"
+                placeholder="Search stocks, ETFs, indices"
+                name="text"
+                type="text"
+                id="searchInput"
+        />
+        <span class="rounded-full bg-green-100 text-green-800 ml-2 p-2 rotate-[45deg] shadow-md focus:shadow-lg focus:shadow-green-500">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </span>
+    </div>
+
+    <div id="searchResults" class="mt-4 text-sm text-white/80"></div>
+</div>
+
+<footer class="fixed bottom-4 text-sm text-white/40" style="opacity: 0.6;">
+    © 2025 StockRyse. All rights reserved.
+</footer>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Function to load the sidebar and then highlight the active link
+        function loadSidebarAndHighlightActive() {
+            fetch('sidebar.html')
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('sidebar-container').innerHTML = data;
+
+                    // Get the current page's filename
+                    const currentPage = window.location.pathname.split('/').pop();
+
+                    // Select all the anchor tags within the loaded sidebar
+                    const sidebarLinks = document.querySelectorAll('#sidebar a');
+
+                    // Loop through each link and check if its href matches the current page
+                    sidebarLinks.forEach(link => {
+                        if (link.getAttribute('href') === currentPage) {
+                            link.classList.add('active'); // Add 'active' class to the current page's link
+                        }
+                    });
+
+                    // Reattach event listeners for the hamburger menu and overlay
+                    const hamburgerMenu = document.getElementById('hamburgerMenu');
+                    const sidebar = document.getElementById('sidebar');
+                    const overlay = document.getElementById('overlay');
+
+                    function toggleSidebar() {
+                        sidebar.classList.toggle('-translate-x-full');
+                        overlay.classList.toggle('active');
+                        hamburgerMenu.classList.toggle('hidden', !sidebar.classList.contains('-translate-x-full'));
+                    }
+
+                    hamburgerMenu.addEventListener('click', toggleSidebar);
+                    overlay.addEventListener('click', () => {
+                        sidebar.classList.add('-translate-x-full');
+                        overlay.classList.remove('active');
+                        hamburgerMenu.classList.remove('hidden');
+                    });
+
+                    // Initialize theme toggle after sidebar is loaded
+                    const modeToggle = document.getElementById('modeToggle');
+                    if (modeToggle) {
+                        modeToggle.addEventListener('click', toggleTheme);
+                        updateThemeBasedOnPreference(); // Call this to set initial theme
+                    }
+                })
+                .catch(error => console.error('Error loading sidebar:', error));
+        }
+
+        loadSidebarAndHighlightActive();
+
+        // Search input handler (remains the same)
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.trim();
+            searchResults.textContent = searchTerm ? `Searching for: ${searchTerm}` : '';
+        });
+
+        // Hamburger menu and overlay toggle (initial setup - will be re-attached after sidebar load)
+        const hamburgerMenuInitial = document.getElementById('hamburgerMenu');
+        const sidebarInitial = document.getElementById('sidebar');
+        const overlayInitial = document.getElementById('overlay');
+
+        if (hamburgerMenuInitial && sidebarInitial && overlayInitial) {
+            hamburgerMenuInitial.addEventListener('click', () => {
+                sidebarInitial.classList.toggle('-translate-x-full');
+                overlayInitial.classList.toggle('active');
+                hamburgerMenuInitial.classList.toggle('hidden', !sidebarInitial.classList.contains('-translate-x-full'));
+            });
+
+            overlayInitial.addEventListener('click', () => {
+                sidebarInitial.classList.add('-translate-x-full');
+                overlayInitial.classList.remove('active');
+                hamburgerMenuInitial.classList.remove('hidden');
+            });
+        }
+    });
+</script>
+</body>
+</html>
